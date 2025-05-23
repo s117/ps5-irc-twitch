@@ -1,16 +1,39 @@
 # ps5-irc-twitch
 用于ps5接受b站弹幕，前提是ps5使用nginx-rtmp方式进行推流
 
-### 方法1
 B站接收弹幕用的是https://github.com/xfgryujk/blivedm (请使用最新blivedm的仓库)
 
-本地运行twitch.py,监听6667端口，用于做消息中转
+启动IRC中继服务器`twitch_irc_repeater.py`，监听6667端口供PS5连接:
 
-本地运行此项目中的sample.py，将用户的弹幕消息，通过新增的send方法，将弹幕转发到twitch.py的6667端口，ps5即可推流时收到弹幕
+```
+$ ./twitch_irc_repeater.py --help
+Usage: twitch_irc_repeater.py [OPTIONS]
 
-### 方法2
-需要有开放平台的access_key,access_key_secret,项目id,具体方式看b站官方开放平台
+Options:
+  --address TEXT  Address to bind the IRC repeater server to.  [default:
+                  0.0.0.0]
+  --port INTEGER  Port to bind the IRC repeater server to.  [default: 6667]
+  --help          Show this message and exit.
+```
 
-本地运行twitch.py,监听6667端口，用于做消息中转
 
-本地运行ws.py,可以获取到自己直播间的弹幕消息
+
+启动B站直播间信息抓取`bilibili_fetch.py`。抓取到的信息将通过`twitch_irc_repeater.py`实时中继到PS5 (弹幕、进入房间、礼物等):
+
+```
+./bilibili_fetch.py --help                                    
+Usage: bilibili_fetch.py [OPTIONS] TWITCH_ID ROOM_IDS...
+
+Options:
+  --cookie_path FILE              Path to the Netscape cookie file  [default:
+                                  cookies.txt]
+  --twitch_irc_repeater_addr TEXT
+                                  Twitch IRC repeater listening address.
+                                  [default: localhost]
+  --twitch_irc_repeater_port INTEGER
+                                  Twitch IRC repeater listening port.
+                                  [default: 6667]
+  --ignore-heartbeat              Stop forwarding heartbeat messages.
+  --debug                         Debug mode.
+  --help                          Show this message and exit.
+```
