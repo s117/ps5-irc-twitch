@@ -112,7 +112,7 @@ class ToTwitchIRCHandler(blivedm.BaseHandler):
         msg = f":{message.uname}!{message.uname}@{message.uname}.tmi.twitch.tv PRIVMSG #{self.twitch_id} :¥{message.price} {message.message}\r\n"
         self.irc_send(msg)
 
-    def _on_interact_word(self, client: ws_base.WebSocketClientBase, message: web_models.InteractWordMessage):
+    def _on_interact_word_v2(self, client: ws_base.WebSocketClientBase, message: web_models.InteractWordV2Message):
         action = {1: "进入了房间", 2: "关注了", 3: "分享了", 4: "特别关注了", 5: "互粉了", 6: "为主播点赞了"}
         self.debug_log(f"[{client.room_id}] {message.username} ({message.uid}) {action[message.msg_type]}")
         msg = f":{self.system_id}!{self.system_id}@{self.system_id}.tmi.twitch.tv PRIVMSG #{self.twitch_id} :{message.username} {action[message.msg_type]}\r\n"
